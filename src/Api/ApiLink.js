@@ -1,1 +1,1 @@
-export const apiLink = 'https://paymet-all888.herokuapp.com/api/';
+export const apiLink = 'https://uzspay.xyz/api/';

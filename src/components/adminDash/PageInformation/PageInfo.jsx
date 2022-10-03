@@ -8,6 +8,8 @@ import { getUserInfo } from '../../../action';
 
 const PageInfo = (props) => {
   const token = localStorage.getItem('token');
+  console.log(token);
+  console.log(props.token);
 
   const user = props.user || localStorage.getItem('userInfo');
 
@@ -30,7 +32,6 @@ const PageInfo = (props) => {
   };
   useEffect(() => {
     props.getUserInfo({ token });
-    console.log('12312');
   }, [props.token]);
 
   if (props.user) {

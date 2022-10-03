@@ -96,6 +96,8 @@ export const userLogin = ({ login, password }) => {
     axios.post(`${Api}login`, { login, password })
       .then(res => {
         dispatch(testLogin(res.data));
+        console.log(res.data);
+        console.log(res.data.data.data);
       }, error => {
         dispatch(loginError(error.response.data && error.response.data));
       });
@@ -106,6 +108,7 @@ export const getUserInfo = ({ token }) => async (dispatch) => {
   const res = await api.get('user', {
     headers: {
       'X-API-KEY': token,
+      Authorization: token,
     },
   });
   dispatch({
