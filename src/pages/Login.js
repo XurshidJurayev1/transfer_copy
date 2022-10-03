@@ -16,11 +16,12 @@ const Login = (props) => {
 
   useEffect(() => {
 
-    console.log(props);
+
     if (props.token.length > 0) {
       navigate('/admin/info');
 
     }
+    console.log('asdas');
 
   }, [props.token]);
 
