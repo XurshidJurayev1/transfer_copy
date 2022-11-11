@@ -28,6 +28,8 @@ const Datatable = (props) => {
   const [summaStatus, setSummaStatus] = useState(false);
   const [summa, setSumma] = useState(0);
   const token = props.token;
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   let list = props.list;
 
@@ -62,6 +64,11 @@ const Datatable = (props) => {
   // };
   //
   // console.log(dateFilter());
+
+
+  useEffect(() => {
+    filtr();
+  }, [page, pageSize]);
 
 
   const filtr = () => {
@@ -122,14 +129,15 @@ const Datatable = (props) => {
     const dateTime2 = new Date(date2).getTime();
     const timestamp2 = Math.floor(dateTime2 / 1000);
 
-    console.log(cardId);
+    console.log(page);
     cardId && formData.append('tid', cardId);
     card && formData.append('pan', card);
     timestamp1 && formData.append('dateFrom', timestamp1);
     timestamp2 && formData.append('dateTo', timestamp2);
     status && formData.append('status', status);
     pay && formData.append('type', pay);
-
+    page && formData.append('page', page);
+    formData.append('limit', pageSize);
 
     props.listTransactions(formData, token);
 
@@ -403,13 +411,18 @@ const Datatable = (props) => {
       </Box>
     </div>
     <DataGrid
+      page={page}
+      onPageChange={(newPage) => setPage(newPage)}
+      pageSize={pageSize}
+      onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
       className="datagrid"
       // getRowId={(row) => row.id}
       rows={list.data ? list.data.transactions : []}
       loading={props.list.length === 0}
       columns={userColumns.concat(actionColumn)}
-      pageSize={10}
-      rowsPerPageOptions={[10]}
+      rowsPerPageOptions={[10, 20, 50, 100]}
+      rowCount={list.data && list.data.count}
+      pagination
       // checkboxSelection
       components={{ Toolbar: GridToolbar }}
       getGridDateOperators={true}
@@ -419,8 +432,7 @@ const Datatable = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    list: state.listTransfer,
-    token: state.token,
+    list: state.listTransfer, token: state.token,
   };
 };
 
