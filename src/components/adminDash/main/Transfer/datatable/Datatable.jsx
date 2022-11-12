@@ -2,7 +2,7 @@ import './datatable.scss';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { userColumns, userRows } from './datatablesource';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { listTransactions, listTransfer } from '../../../../../action';
 import EditIcon from '@mui/icons-material/Edit';
@@ -15,7 +15,7 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 const Datatable = (props) => {
-  const [perPage, setPerPage] = useState('');
+  const [data, setData] = useState([]);
   const [card, setCard] = useState('');
   const [accaunt, setAccount] = useState('');
   const [cardId, setCardId] = useState('');
@@ -28,10 +28,20 @@ const Datatable = (props) => {
   const [summaStatus, setSummaStatus] = useState(false);
   const [summa, setSumma] = useState(0);
   const token = props.token;
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   let list = props.list;
+  console.log(data);
+
+  useEffect(() => {
+    if (props.list.data) {
+      setData(props.list.data.transactions);
+    } else {
+      setData([]);
+    }
+  }, [props.list]);
+
 
   // const dateFilter = () => {
   //   const data = [{ id: 1, receive_date: '07.03.2022 05:13:03', remarks: '11' }, {
@@ -128,7 +138,7 @@ const Datatable = (props) => {
     const timestamp1 = Math.floor(dateTime1 / 1000);
     const dateTime2 = new Date(date2).getTime();
     const timestamp2 = Math.floor(dateTime2 / 1000);
-
+    const pageReq = page === 0 ? 1 : page + 1;
     console.log(page);
     cardId && formData.append('tid', cardId);
     card && formData.append('pan', card);
@@ -136,7 +146,7 @@ const Datatable = (props) => {
     timestamp2 && formData.append('dateTo', timestamp2);
     status && formData.append('status', status);
     pay && formData.append('type', pay);
-    page && formData.append('page', page + 1);
+    page && formData.append('page', page);
     formData.append('limit', pageSize);
 
     props.listTransactions(formData, token);
@@ -150,7 +160,7 @@ const Datatable = (props) => {
   // console.log(dateTime);
   // console.log(timestamp);
 
-  console.log(props);
+  console.log(props.list);
 
   const reset = () => {
     setFiltred('');
@@ -411,21 +421,26 @@ const Datatable = (props) => {
       </Box>
     </div>
     <DataGrid
-      page={page}
-      onPageChange={(newPage) => setPage(newPage)}
+      page={page - 1}
+      onPageChange={(newPage) => {
+        console.log(newPage);
+        setPage(newPage + 1);
+      }}
       pageSize={pageSize}
       onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
       className="datagrid"
-      // getRowId={(row) => row.id}
-      rows={list.data ? list.data.transactions : []}
+      getRowId={(row) => row.id}
+      rows={data}
       loading={props.list.length === 0}
       columns={userColumns.concat(actionColumn)}
       rowsPerPageOptions={[10, 20, 50, 100]}
       rowCount={list.data && list.data.count}
       pagination
-      // checkboxSelection
+      checkboxSelection
+      disableSelectionOnClick
       components={{ Toolbar: GridToolbar }}
       getGridDateOperators={true}
+
     />
   </div>);
 };

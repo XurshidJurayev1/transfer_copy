@@ -14,8 +14,6 @@ export const listTransfer = () => async (dispatch) => {
 };
 
 export const listTransactions = (formData, token) => async (dispatch) => {
-  console.log(token);
-
   const res = await api.post('history', formData, {
     headers: {
       'X-API-KEY': token,
