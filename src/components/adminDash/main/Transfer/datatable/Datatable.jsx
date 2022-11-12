@@ -4,7 +4,7 @@ import { userColumns, userRows } from './datatablesource';
 import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { listTransactions, listTransfer } from '../../../../../action';
+import { deleteToast, listTransactions, listTransfer } from '../../../../../action';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
@@ -13,6 +13,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { toast, ToastContainer } from 'react-toastify';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+
 
 const Datatable = (props) => {
   const [data, setData] = useState([]);
@@ -23,8 +26,8 @@ const Datatable = (props) => {
   const [status, setStatus] = useState('');
   const [filtred, setFiltred] = useState('');
   const [filtrFunc, setFiltrFunc] = useState(false);
-  const [date1, setDate1] = useState(new Date('mm/dd/yyyy'));
-  const [date2, setDate2] = useState(new Date('mm/dd/yyyy'));
+  const [date1, setDate1] = useState(null);
+  const [date2, setDate2] = useState(null);
   const [summaStatus, setSummaStatus] = useState(false);
   const [summa, setSumma] = useState(0);
   const token = props.token;
@@ -32,7 +35,6 @@ const Datatable = (props) => {
   const [pageSize, setPageSize] = useState(10);
 
   let list = props.list;
-  console.log(data);
 
   useEffect(() => {
     if (props.list.data) {
@@ -41,6 +43,23 @@ const Datatable = (props) => {
       setData([]);
     }
   }, [props.list]);
+
+  useEffect(() => {
+    if (props.error.errStatus === 404) {
+      toast.error(props.error.errText, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      });
+      props.deleteToast();
+
+    }
+  }, [props.error]);
 
 
   // const dateFilter = () => {
@@ -78,7 +97,16 @@ const Datatable = (props) => {
 
   useEffect(() => {
     filtr();
-  }, [page, pageSize]);
+  }, [
+    page,
+    pageSize,
+    date1,
+    date2,
+    card,
+    card,
+    status,
+    pay,
+  ]);
 
 
   const filtr = () => {
@@ -160,7 +188,6 @@ const Datatable = (props) => {
   // console.log(dateTime);
   // console.log(timestamp);
 
-  console.log(props.list);
 
   const reset = () => {
     setFiltred('');
@@ -168,8 +195,8 @@ const Datatable = (props) => {
     setAccount('');
     setCardId('');
     setCard('');
-    setDate1('mm/dd/yyyy');
-    setDate2('mm/dd/yyyy');
+    setDate1(null);
+    setDate2(null);
     setSummaStatus('');
     setFiltrFunc(false);
   };
@@ -206,7 +233,6 @@ const Datatable = (props) => {
       </div>);
     },
   }];
-  console.log();
 
   const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
@@ -282,6 +308,7 @@ const Datatable = (props) => {
 
 
   return (<div className="datatable">
+    ToastContainer
     <div className="datatableTitle">
       <Box
         className="filter-inputs">
@@ -300,12 +327,11 @@ const Datatable = (props) => {
           <Box className="form_input_fields">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <Stack spacing={3}>
-                <DateTimePicker
-                  mask="__/__/____ __:__ _m"
+                <DesktopDatePicker
+                  inputFormat="dd/MM/yyyy"
                   renderInput={(props) => <TextField {...props} />}
                   label="Выборка дат с"
                   value={date1}
-                  inputFormat="dd.MM.yyyy - HH:mm"
                   onChange={(newValue) => {
                     setDate1(newValue);
                   }}
@@ -316,12 +342,11 @@ const Datatable = (props) => {
           <Box className="form_input_fields">
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <Stack spacing={3}>
-                <DateTimePicker
-                  mask="__/__/____ __:__ _m"
+                <DesktopDatePicker
+                  inputFormat="dd/MM/yyyy"
                   renderInput={(props) => <TextField {...props} />}
                   label="Выборка дат до"
                   value={date2}
-                  inputFormat="dd.MM.yyyy - HH:mm"
                   onChange={(newValue) => {
                     setDate2(newValue);
                   }}
@@ -402,9 +427,9 @@ const Datatable = (props) => {
           width: '100%', display: 'flex', flexWrap: 'wrap',
 
         }}>
-          <button style={{ marginRight: '20px' }} type="button" className="btn btn-primary primary_btn"
-                  onClick={() => filtr()}> Filtr
-          </button>
+          {/*<button style={{ marginRight: '20px' }} type="button" className="btn btn-primary primary_btn"*/}
+          {/*        onClick={() => filtr()}> Filtr*/}
+          {/*</button>*/}
           <button type="button" style={{ marginRight: '20px' }} className="btn btn-primary primary_btn"
                   onClick={() => reset()}> reset
           </button>
@@ -415,7 +440,7 @@ const Datatable = (props) => {
           {/*<button type="button" className="btn btn-info primary_btn" style={{ marginRight: '20px' }} onClick={allSumma}>*/}
           {/*  Сумма*/}
           {/*</button>*/}
-          <p> Общая сумма: {list.data && list.data.amount_sum} </p>
+          <p> Общая сумма: {list.data ? list.data.amount_sum : 0} </p>
         </Box>
 
       </Box>
@@ -431,7 +456,7 @@ const Datatable = (props) => {
       className="datagrid"
       getRowId={(row) => row.id}
       rows={data}
-      loading={props.list.length === 0}
+      // loading={props.list.length === 0}
       columns={userColumns.concat(actionColumn)}
       rowsPerPageOptions={[10, 20, 50, 100]}
       rowCount={list.data && list.data.count}
@@ -447,8 +472,8 @@ const Datatable = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    list: state.listTransfer, token: state.token,
+    list: state.listTransfer, token: state.token, error: state.error,
   };
 };
 
-export default connect(mapStateToProps, { listTransfer, listTransactions })(Datatable);
+export default connect(mapStateToProps, { listTransfer, listTransactions, deleteToast })(Datatable);

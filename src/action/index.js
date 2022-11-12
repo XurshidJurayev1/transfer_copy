@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { apiLink } from '../Api/ApiLink';
 import { Api } from '../Api/NewApiUrl';
+import { batch } from 'react-redux';
 
 export const listTransfer = () => async (dispatch) => {
   const res = await api.get('/all');
@@ -18,12 +19,31 @@ export const listTransactions = (formData, token) => async (dispatch) => {
     headers: {
       'X-API-KEY': token,
     },
+  }).then(res => {
+    dispatch({
+      type: 'LIST_TRANSFER', payload: res.data,
+    });
+  }).catch(err => {
+    let errStatus = err.response.status;
+    let errText = err.response.data.data[0];
+    if (err.response.status === 404 && err.response.data.data[0] === 'TRANSACTIONS_NOT_FOUND') {
+      dispatch({
+        type: 'LIST_TRANSFER', payload: [],
+      });
+      dispatch({
+        type: 'ERROR', payload: { errText, errStatus },
+      });
+    }
   });
-  dispatch({
-    type: 'LIST_TRANSFER', payload: res.data,
-  });
+
 };
 
+export const deleteToast = () => async (dispatch) => {
+
+  dispatch({
+    type: 'ERROR_DEL', payload: {},
+  });
+};
 
 export const logout = () => async (dispatch) => {
   dispatch({
@@ -51,6 +71,7 @@ export const login = ({ email, password }) => async (dispatch) => {
   // });
 
 };
+
 
 function loginRequest() {
   return {
@@ -105,8 +126,7 @@ export const userLogin = ({ login, password }) => {
 export const getUserInfo = ({ token }) => async (dispatch) => {
   const res = await api.get('user', {
     headers: {
-      'X-API-KEY': token,
-      Authorization: token,
+      'X-API-KEY': token, Authorization: token,
     },
   });
   dispatch({

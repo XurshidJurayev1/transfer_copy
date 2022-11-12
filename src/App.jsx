@@ -2,7 +2,7 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import './style/dark.scss';
-import { useContext, Suspense } from 'react';
+import React, { useContext, Suspense } from 'react';
 import { DarkModeContext } from './context/darkModeContext';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AdminRoutes from './AdminRoutes';
@@ -10,6 +10,7 @@ import { Box } from '@mui/material';
 import { css } from '@emotion/react';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { HashLoader } from 'react-spinners';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -24,9 +25,21 @@ function App() {
   };
 
 
-
   return (
     <div className={darkMode ? 'app dark' : 'app'}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <BrowserRouter>
         <Suspense fallback={<Loader />}>
           <AdminRoutes />
@@ -34,6 +47,7 @@ function App() {
         </Suspense>
         {/*<Loader />*/}
       </BrowserRouter>
+      <ToastContainer />
     </div>
   );
 }

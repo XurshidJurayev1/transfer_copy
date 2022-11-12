@@ -48,7 +48,6 @@ const Login = (props) => {
       <link rel="canonical" href="http://mysite.com/example" />
     </Helmet>
     <div className="container">
-      <ToastContainer />
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="login__form mt-5">

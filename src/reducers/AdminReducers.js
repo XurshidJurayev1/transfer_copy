@@ -45,6 +45,8 @@ export const error = (state = {}, action) => {
   switch (action.type) {
     case 'ERROR' :
       return action.payload;
+    case 'ERROR_DEL':
+      return action.payload;
     default :
       return state;
   }
