@@ -440,7 +440,7 @@ const Datatable = (props) => {
       disableSelectionOnClick
       components={{ Toolbar: GridToolbar }}
       getGridDateOperators={true}
-
+      paginationMode="server"
     />
   </div>);
 };

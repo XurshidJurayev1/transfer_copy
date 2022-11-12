@@ -39,7 +39,7 @@ const AdminOutlet = () => {
         {/*  <Widget type="earning" />*/}
         {/*  <Widget type="balance" />*/}
         {/*</div>*/}
-        <div style={{ paddingTop: '50px' }}>
+        <div style={{ paddingTop: '50px', minHeight: '120vh' }}>
           <Outlet />
         </div>
 
