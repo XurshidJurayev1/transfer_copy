@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import DataTable from 'react-data-table-component';
 import { columns, customStyles, data } from './Data';
 import { getUserInfo } from '../../../action';
+import { formatSum } from '../../../helpers/formatSum';
 
 const PageInfo = (props) => {
   const token = localStorage.getItem('token');
@@ -63,7 +64,7 @@ const PageInfo = (props) => {
                     <li className="list-group-item"><span className="table__span">ACC ID:</span> <span
                       className="table__span2">{user.data.user.id && user.data.user.id}</span></li>
                     <li className="list-group-item"><span className="table__span">ACC BALANCE:</span> <span
-                      className="table__span2">{Number(user.data.user.balance && user.data.user.balance).toDivide()}
+                      className="table__span2">{user.data.user.balance && formatSum(Number(user.data.user.balance).toFixed())}
                       <b>uzs</b></span></li>
                     <li className="list-group-item"><span className="table__span">ACC ALLOWED IP:</span> <span
                       className="table__span2">user.acc_ip</span></li>
