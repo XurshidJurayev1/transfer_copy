@@ -4,7 +4,7 @@ import { userColumns, userRows } from './datatablesource';
 import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { deleteToast, listTransactions, listTransfer } from '../../../../../action';
+import { deleteToast, fetchExcelData, listTransactions, listTransfer } from '../../../../../action';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
@@ -15,6 +15,7 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { toast, ToastContainer } from 'react-toastify';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { formatSum } from '../../../../../helpers/formatSum';
 
 
 const Datatable = (props) => {
@@ -97,16 +98,7 @@ const Datatable = (props) => {
 
   useEffect(() => {
     filtr();
-  }, [
-    page,
-    pageSize,
-    date1,
-    date2,
-    card,
-    card,
-    status,
-    pay,
-  ]);
+  }, [page, pageSize, date1, date2, card, card, status, pay]);
 
 
   const filtr = () => {
@@ -238,19 +230,6 @@ const Datatable = (props) => {
 
   const fileExtension = '.xlsx';
 
-  const exportToCSV = (csvData, fileName) => {
-
-    const ws = XLSX.utils.json_to_sheet(csvData);
-
-    const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
-
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
-    const data = new Blob([excelBuffer], { type: fileType });
-
-    FileSaver.saveAs(data, fileName + fileExtension);
-
-  };
 
   const fileData = list.data && list.data.transactions;
 
@@ -305,6 +284,25 @@ const Datatable = (props) => {
   // }
   //
   // console.log(filterTimes(list, date1, date2));
+
+  const exportExcel = (count) => {
+    const formData = new FormData();
+    const dateTime1 = new Date(date1).getTime();
+    const timestamp1 = Math.floor(dateTime1 / 1000);
+    const dateTime2 = new Date(date2).getTime();
+    const timestamp2 = Math.floor(dateTime2 / 1000);
+    console.log(page);
+    cardId && formData.append('tid', cardId);
+    card && formData.append('pan', card);
+    timestamp1 && formData.append('dateFrom', timestamp1);
+    timestamp2 && formData.append('dateTo', timestamp2);
+    status && formData.append('status', status);
+    pay && formData.append('type', pay);
+    page && formData.append('page', page);
+    formData.append('limit', count);
+
+    props.fetchExcelData(formData, token);
+  };
 
 
   return (<div className="datatable">
@@ -434,13 +432,13 @@ const Datatable = (props) => {
                   onClick={() => reset()}> reset
           </button>
           <button type="button" className="btn btn-success primary_btn" style={{ marginRight: '20px' }}
-                  onClick={() => exportToCSV(fileData, fileName)}>
+                  onClick={() => exportExcel(list.data.count)}>
             Export
           </button>
           {/*<button type="button" className="btn btn-info primary_btn" style={{ marginRight: '20px' }} onClick={allSumma}>*/}
           {/*  Сумма*/}
           {/*</button>*/}
-          <p> Общая сумма: {list.data ? list.data.amount_sum : 0} </p>
+          <p> Общая сумма: {list.data ? formatSum(list.data.amount_sum) + ' сум' : 0} </p>
         </Box>
 
       </Box>
@@ -476,4 +474,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { listTransfer, listTransactions, deleteToast })(Datatable);
+export default connect(mapStateToProps, { listTransfer, listTransactions, deleteToast, fetchExcelData })(Datatable);

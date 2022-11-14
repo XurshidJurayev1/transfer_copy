@@ -1,11 +1,10 @@
 import api from '../Api';
-
-import { toast } from 'react-toastify';
+import { exportToCSV } from '../helpers/exportSheets';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { apiLink } from '../Api/ApiLink';
 import { Api } from '../Api/NewApiUrl';
-import { batch } from 'react-redux';
+
 
 export const listTransfer = () => async (dispatch) => {
   const res = await api.get('/all');
@@ -148,4 +147,19 @@ export const userInfo = ({ login, password, token }) => {
         dispatch(loginError(error.response.data && error.response.data));
       });
   };
+};
+
+export const fetchExcelData = (formData, token) => async () => {
+  const res = await api.post('history', formData, {
+    headers: {
+      'X-API-KEY': token,
+    },
+  }).then(res => {
+    console.log(res);
+    exportToCSV(res.data.data.transactions, 'TransactionsSheets');
+  }).catch(err => {
+    console.log(err);
+  });
+
+
 };
