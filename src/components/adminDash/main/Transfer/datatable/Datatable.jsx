@@ -15,7 +15,7 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { toast, ToastContainer } from 'react-toastify';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { formatSum } from '../../../../../helpers/formatSum';
+import { formatSum } from '../../../../../helpers/formatSum2';
 
 
 const Datatable = (props) => {
