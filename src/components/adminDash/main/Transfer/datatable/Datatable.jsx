@@ -153,17 +153,32 @@ const Datatable = (props) => {
     //   setFiltrFunc(true);
     // }
 
+
     const formData = new FormData();
     const dateTime1 = new Date(date1).getTime();
+    const timeZone1 = new Date(date1).getTimezoneOffset();
     const timestamp1 = Math.floor(dateTime1 / 1000);
     const dateTime2 = new Date(date2).getTime();
+    const timeZone2 = new Date(date2).getTimezoneOffset();
     const timestamp2 = Math.floor(dateTime2 / 1000);
     const pageReq = page === 0 ? 1 : page + 1;
-    console.log(page);
+
+    const getZone1 = timestamp1 + timeZone1;
+    const getZone2 = timestamp2 + timeZone2;
+
+
+    // console.log(timestamp1 + timeZone1);
+    // console.log(timestamp1);
+    // console.log(timeZone1);
+    // console.log(dateTime1);
+
+
     cardId && formData.append('tid', cardId);
     card && formData.append('pan', card);
-    timestamp1 && formData.append('dateFrom', timestamp1);
-    timestamp2 && formData.append('dateTo', timestamp2);
+    // timestamp1 && formData.append('dateFrom', timestamp1);
+    timestamp1 && formData.append('dateFrom', timestamp1 === 0 ? timestamp1 : getZone1);
+    // timestamp2 && formData.append('dateTo', timestamp2);
+    timestamp2 && formData.append('dateTo', timestamp2 === 0 ? timestamp2 : getZone2);
     status && formData.append('status', status);
     pay && formData.append('type', pay);
     page && formData.append('page', page);
@@ -306,7 +321,6 @@ const Datatable = (props) => {
 
 
   return (<div className="datatable">
-    ToastContainer
     <div className="datatableTitle">
       <Box
         className="filter-inputs">
