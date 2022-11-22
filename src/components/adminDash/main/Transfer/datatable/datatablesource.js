@@ -38,9 +38,10 @@ export const userColumns = [{ field: 'id', headerName: 'ID', width: 130 },
     field: 'receiver_pan', headerName: 'Карта Получателя', width: 230,
   }, {
     flex: 1, field: 'created_at', headerName: 'Начало заявки', width: 230, renderCell: params => {
+      console.log(params.row.created_at);
       return (<div className="important_rows_table">
         {/*<p>{convertDate(params.row.create_time)}</p>*/}
-        <Moment format="D MMM YYYY - HH:mm:ss" withTitle>{params.row.created_at}</Moment>
+        <Moment format="D MMM YYYY - HH:mm:ss">{params.row.created_at}</Moment>
         <time></time>
 
         {/*<p>{format(new Date(params.row.create_time), 'dd/MM/Y - HH:mm:ss')}</p>*/}
@@ -65,7 +66,7 @@ export const userColumns = [{ field: 'id', headerName: 'ID', width: 130 },
     field: 'updated_at', headerName: 'Окончание заявки', width: 200, renderCell: params => {
       return (<div className="important_rows_table">
         {/*<p>{convertDate(params.row.create_time)}</p>*/}
-        <Moment format="D MMM YYYY - HH:mm:ss" withTitle>{params.row.updated_at}</Moment>
+        <Moment format="D MMM YYYY - HH:mm:ss">{params.row.updated_at}</Moment>
         <time></time>
 
         {/*<p>{format(new Date(params.row.create_time), 'dd/MM/Y - HH:mm:ss')}</p>*/}
