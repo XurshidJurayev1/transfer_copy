@@ -163,8 +163,9 @@ const Datatable = (props) => {
     const timestamp2 = Math.floor(dateTime2 / 1000);
     const pageReq = page === 0 ? 1 : page + 1;
 
-    const getZone1 = timestamp1 + timeZone1;
-    const getZone2 = timestamp2 + timeZone2;
+    const getZone1 = timestamp1 + 60 * timeZone1;
+    const getZone2 = timestamp2 + 60 * timeZone2;
+
 
 
     // console.log(timestamp1 + timeZone1);
