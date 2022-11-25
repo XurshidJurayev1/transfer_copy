@@ -167,7 +167,6 @@ const Datatable = (props) => {
     const getZone2 = timestamp2 + 60 * timeZone2;
 
 
-
     // console.log(timestamp1 + timeZone1);
     // console.log(timestamp1);
     // console.log(timeZone1);
@@ -176,10 +175,10 @@ const Datatable = (props) => {
 
     cardId && formData.append('tid', cardId);
     card && formData.append('pan', card);
-    // timestamp1 && formData.append('dateFrom', timestamp1);
-    timestamp1 && formData.append('dateFrom', timestamp1 === 0 ? timestamp1 : getZone1);
-    // timestamp2 && formData.append('dateTo', timestamp2);
-    timestamp2 && formData.append('dateTo', timestamp2 === 0 ? timestamp2 : getZone2);
+    timestamp1 && formData.append('dateFrom', timestamp1);
+    // timestamp1 && formData.append('dateFrom', timestamp1 === 0 ? timestamp1 : getZone1);
+    timestamp2 && formData.append('dateTo', timestamp2);
+    // timestamp2 && formData.append('dateTo', timestamp2 === 0 ? timestamp2 : getZone2);
     status && formData.append('status', status);
     pay && formData.append('type', pay);
     page && formData.append('page', page);
