@@ -313,7 +313,7 @@ const Datatable = (props) => {
     timestamp2 && formData.append('dateTo', timestamp2);
     status && formData.append('status', status);
     pay && formData.append('type', pay);
-    page && formData.append('page', page);
+    page && formData.append('page', 1);
     formData.append('limit', count);
 
     props.fetchExcelData(formData, token);
